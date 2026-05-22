@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Uploads (keep folder structure but not images)
+uploads/*.jpg
+uploads/*.png
+uploads/*.gif
+uploads/*.jpeg
+uploads/optimized-*
+!uploads/.gitkeep
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Build files
+dist/
+build/
+*.min.js
+*.min.css
+
+# Backup files
+*.backup
+*.sql
+backup.sql

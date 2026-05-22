@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: glass-auth-dashboard-backend
+    env: node
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        value: YOUR_DATABASE_URL_HERE
+      - key: JWT_SECRET
+        value: YOUR_JWT_SECRET_HERE
+      - key: FRONTEND_URL
+        value: https://your-frontend-url

@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>
+      Glass Auth System | Behavioral CAPTCHA + Dashboard + User Management
+    </title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="animated-bg"></div>
+
+    <!-- AUTH CONTAINER -->
+    <div id="authContainer" class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2 id="formTitle">Welcome Back</h2>
+          <div class="toggle-buttons">
+            <button class="toggle-btn active" onclick="switchForm('login')">
+              Login
+            </button>
+            <button class="toggle-btn" onclick="switchForm('register')">
+              Register
+            </button>
+          </div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm" class="form active">
+          <form id="loginFormElement">
+            <div class="input-group">
+              <label>Email Address</label>
+              <div class="input-wrapper">
+                <input
+                  type="email"
+                  id="loginEmail"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div class="error-msg" id="loginEmailError"></div>
+            </div>
+
+            <div class="input-group">
+              <label>Password</label>
+              <div class="input-wrapper">
+                <input
+                  type="password"
+                  id="loginPassword"
+                  placeholder="Enter your password"
+                  required
+                />
+                <i
+                  class="fa-solid fa-eye-slash toggle-password"
+                  onclick="togglePassword('loginPassword', this)"
+                ></i>
+              </div>
+              <div class="error-msg" id="loginPasswordError"></div>
+            </div>
+
+            <div class="captcha-container" id="captchaContainer">
+              <div class="captcha-status" id="captchaStatus">
+                <i class="fa-solid fa-spinner fa-pulse"></i>
+                <span id="captchaMessage">Verifying you're human...</span>
+              </div>
+              <div class="captcha-badge">
+                <i class="fa-solid fa-shield-haltered"></i> Protected
+              </div>
+              <input type="hidden" id="captchaScore" value="0" />
+            </div>
+
+            <div class="twofa-section" id="twofaSection">
+              <label>📱 Enter 6-digit code (demo: 123456)</label>
+              <div class="otp-inputs">
+                <input
+                  type="text"
+                  maxlength="1"
+                  class="otp-input"
+                  data-otp-index="0"
+                />
+                <input
+                  type="text"
+                  maxlength="1"
+                  class="otp-input"
+                  data-otp-index="1"
+                />
+                <input
+                  type="text"
+                  maxlength="1"
+                  class="otp-input"
+                  data-otp-index="2"
+                />
+                <input
+                  type="text"
+                  maxlength="1"
+                  class="otp-input"
+                  data-otp-index="3"
+                />
+                <input
+                  type="text"
+                  maxlength="1"
+                  class="otp-input"
+                  data-otp-index="4"
+                />
+                <input
+                  type="text"
+                  maxlength="1"
+                  class="otp-input"
+                  data-otp-index="5"
+                />
+              </div>
+              <div class="error-msg" id="otpError"></div>
+            </div>
+
+            <div class="social-login">
+              <p>Or continue with</p>
+              <div class="social-icons">
+                <div class="social-icon" onclick="socialLogin('google')">
+                  <i class="fab fa-google"></i>
+                </div>
+                <div class="social-icon" onclick="socialLogin('facebook')">
+                  <i class="fab fa-facebook-f"></i>
+                </div>
+                <div class="social-icon" onclick="socialLogin('github')">
+                  <i class="fab fa-github"></i>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Sign In</button>
+          </form>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerForm" class="form">
+          <form id="registerFormElement">
+            <div class="input-group">
+              <label>Full Name</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  id="regName"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+              <div class="error-msg" id="regNameError"></div>
+            </div>
+
+            <div class="input-group">
+              <label>Email Address</label>
+              <div class="input-wrapper">
+                <input
+                  type="email"
+                  id="regEmail"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div class="error-msg" id="regEmailError"></div>
+            </div>
+
+            <div class="input-group">
+              <label>Password</label>
+              <div class="input-wrapper">
+                <input
+                  type="password"
+                  id="regPassword"
+                  placeholder="Create a password"
+                  required
+                  onkeyup="checkPasswordStrength()"
+                />
+                <i
+                  class="fa-solid fa-eye-slash toggle-password"
+                  onclick="togglePassword('regPassword', this)"
+                ></i>
+              </div>
+              <div class="strength-meter">
+                <div class="strength-bar">
+                  <div class="strength-fill" id="strengthFill"></div>
+                </div>
+                <div class="strength-text" id="strengthText">
+                  Enter a password
+                </div>
+              </div>
+              <div class="error-msg" id="regPasswordError"></div>
+            </div>
+
+            <div class="input-group">
+              <label>Confirm Password</label>
+              <div class="input-wrapper">
+                <input
+                  type="password"
+                  id="regConfirmPassword"
+                  placeholder="Confirm your password"
+                  required
+                />
+                <i
+                  class="fa-solid fa-eye-slash toggle-password"
+                  onclick="togglePassword('regConfirmPassword', this)"
+                ></i>
+              </div>
+              <div class="error-msg" id="regConfirmError"></div>
+            </div>
+
+            <div class="captcha-container" id="regCaptchaContainer">
+              <div class="captcha-status" id="regCaptchaStatus">
+                <i class="fa-solid fa-spinner fa-pulse"></i>
+                <span id="regCaptchaMessage">Verifying you're human...</span>
+              </div>
+              <div class="captcha-badge">
+                <i class="fa-solid fa-shield-haltered"></i> Protected
+              </div>
+              <input type="hidden" id="regCaptchaScore" value="0" />
+            </div>
+
+            <div class="social-login">
+              <p>Or sign up with</p>
+              <div class="social-icons">
+                <div class="social-icon" onclick="socialLogin('google')">
+                  <i class="fab fa-google"></i>
+                </div>
+                <div class="social-icon" onclick="socialLogin('facebook')">
+                  <i class="fab fa-facebook-f"></i>
+                </div>
+                <div class="social-icon" onclick="socialLogin('github')">
+                  <i class="fab fa-github"></i>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Create Account</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD CONTAINER -->
+    <div
+      id="dashboardContainer"
+      class="dashboard-container"
+      style="display: none"
+    >
+      <div class="dashboard-glass">
+        <!-- Sidebar -->
+        <div class="dashboard-sidebar">
+          <div class="sidebar-header">
+            <div class="user-avatar" id="userAvatar">
+              <i class="fas fa-user-circle"></i>
+            </div>
+            <h3 id="userName">User Name</h3>
+            <p id="userEmail">user@example.com</p>
+          </div>
+          <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard"
+              ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+            >
+            <a href="#" class="nav-item" data-page="profile"
+              ><i class="fas fa-user"></i> Profile</a
+            >
+            <a href="#" class="nav-item" data-page="analytics"
+              ><i class="fas fa-chart-line"></i> Analytics</a
+            >
+            <a href="#" class="nav-item" data-page="users"
+              ><i class="fas fa-users-cog"></i> Users</a
+            >
+            <a href="#" class="nav-item" data-page="settings"
+              ><i class="fas fa-cog"></i> Settings</a
+            >
+          </nav>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="dashboard-main">
+          <div class="dashboard-header">
+            <h2 id="pageTitle">Dashboard</h2>
+            <div class="header-actions">
+              <div class="real-time-clock" id="realTimeClock">--:--:--</div>
+              <button id="darkModeToggle" class="icon-btn">
+                <i class="fas fa-moon"></i>
+              </button>
+              <button onclick="refreshDashboard()" class="icon-btn">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dashboard Content -->
+          <div id="dashboardContent">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div>
+                  <h3 id="totalUsers">0</h3>
+                  <p>Total Users</p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <i class="fas fa-fire"></i>
+                <div>
+                  <h3 id="streakDays">0</h3>
+                  <p>Day Streak 🔥</p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <i class="fas fa-circle online"></i>
+                <div>
+                  <h3 id="activeSessions">0</h3>
+                  <p>Active Now</p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <i class="fas fa-chart-line"></i>
+                <div>
+                  <h3 id="totalActivities">0</h3>
+                  <p>Total Activities</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions Bar -->
+            <div class="quick-actions">
+              <button onclick="quickAction('message')" class="action-btn">
+                <i class="fas fa-envelope"></i> Send Message
+              </button>
+              <button onclick="quickAction('share')" class="action-btn">
+                <i class="fas fa-share-alt"></i> Share Profile
+              </button>
+              <button onclick="quickAction('export')" class="action-btn">
+                <i class="fas fa-download"></i> Export Data
+              </button>
+              <button onclick="quickAction('invite')" class="action-btn">
+                <i class="fas fa-user-plus"></i> Invite Friend
+              </button>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="two-columns">
+              <!-- Activity Feed -->
+              <div class="activity-section">
+                <div class="section-header">
+                  <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                  <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">
+                      All
+                    </button>
+                    <button class="filter-btn" data-filter="login">
+                      Logins
+                    </button>
+                    <button class="filter-btn" data-filter="profile">
+                      Profile
+                    </button>
+                  </div>
+                </div>
+                <div class="activity-feed" id="activityFeed">
+                  <div class="activity-placeholder">Loading activities...</div>
+                </div>
+                <button id="loadMoreBtn" class="load-more">
+                  Load More <i class="fas fa-arrow-down"></i>
+                </button>
+              </div>
+
+              <!-- Right Column -->
+              <div class="right-column">
+                <!-- Leaderboard -->
+                <div class="leaderboard-section">
+                  <h3><i class="fas fa-trophy"></i> Weekly Leaderboard</h3>
+                  <div class="leaderboard-list" id="leaderboardList"></div>
+                </div>
+
+                <!-- Recent Signups -->
+                <div class="recent-section">
+                  <h3><i class="fas fa-user-plus"></i> Recent Signups</h3>
+                  <div class="recent-list" id="recentSignups"></div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="notifications-section">
+                  <h3>
+                    <i class="fas fa-bell"></i> Notifications
+                    <span id="notificationBadge" class="badge"></span>
+                  </h3>
+                  <div class="notifications-list" id="notificationsList"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Chart -->
+            <div class="chart-section">
+              <h3>
+                <i class="fas fa-chart-bar"></i> Activity Overview (Last 7 Days)
+              </h3>
+              <canvas id="activityChart" width="800" height="300"></canvas>
+            </div>
+          </div>
+
+          <!-- Profile Content -->
+          <div id="profileContent" style="display: none">
+            <div class="profile-glass">
+              <div class="profile-header">
+                <div class="profile-avatar">
+                  <img
+                    id="profileAvatarImg"
+                    src=""
+                    alt=""
+                    style="
+                      width: 100%;
+                      height: 100%;
+                      object-fit: cover;
+                      display: none;
+                    "
+                  />
+                  <i
+                    id="profileAvatarIcon"
+                    class="fas fa-user-circle"
+                    style="font-size: 3.5rem"
+                  ></i>
+                  <button
+                    class="avatar-upload-btn"
+                    onclick="document.getElementById('avatarUpload').click()"
+                  >
+                    <i class="fas fa-camera"></i>
+                  </button>
+                  <input
+                    type="file"
+                    id="avatarUpload"
+                    accept="image/*"
+                    style="display: none"
+                  />
+                </div>
+              </div>
+              <div class="profile-form">
+                <div class="form-group">
+                  <label>Full Name</label
+                  ><input
+                    type="text"
+                    id="profileName"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Email</label
+                  ><input type="email" id="profileEmail" disabled />
+                </div>
+                <div class="form-group">
+                  <label>Bio</label
+                  ><textarea
+                    id="profileBio"
+                    rows="3"
+                    placeholder="Tell us about yourself"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Location</label
+                  ><input
+                    type="text"
+                    id="profileLocation"
+                    placeholder="City, Country"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Website</label
+                  ><input
+                    type="url"
+                    id="profileWebsite"
+                    placeholder="https://"
+                  />
+                </div>
+                <div class="form-divider">
+                  <hr />
+                  <span>Change Password</span>
+                  <hr />
+                </div>
+                <div class="form-group">
+                  <label>Current Password</label
+                  ><input
+                    type="password"
+                    id="currentPassword"
+                    placeholder="Enter current password"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>New Password</label
+                  ><input
+                    type="password"
+                    id="newPassword"
+                    placeholder="Enter new password"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Confirm New Password</label
+                  ><input
+                    type="password"
+                    id="confirmNewPassword"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+                <button class="btn-primary" onclick="updateProfile()">
+                  Update Profile
+                </button>
+              </div>
+              <div class="profile-stats">
+                <div class="stat-item">
+                  <span>Member Since</span><strong id="memberSince">-</strong>
+                </div>
+                <div class="stat-item">
+                  <span>Total Logins</span
+                  ><strong id="profileLoginCount">-</strong>
+                </div>
+                <div class="stat-item">
+                  <span>Last Login</span><strong id="lastLoginDate">-</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Content -->
+          <div id="analyticsContent" style="display: none">
+            <div class="analytics-grid">
+              <div class="analytics-card">
+                <h3>User Growth</h3>
+                <canvas id="userChart"></canvas>
+              </div>
+              <div class="analytics-card">
+                <h3><i class="fas fa-trophy"></i> Top Users</h3>
+                <div id="topUsersList"></div>
+              </div>
+              <div class="analytics-card">
+                <h3>Export Options</h3>
+                <button class="export-btn" onclick="exportUsers()">
+                  <i class="fas fa-download"></i> Export Users CSV
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Users Management Content -->
+          <div id="usersContent" style="display: none">
+            <div class="users-management">
+              <div class="management-header">
+                <h3><i class="fas fa-users-cog"></i> User Management</h3>
+                <button class="btn-primary" onclick="openAddUserModal()">
+                  <i class="fas fa-user-plus"></i> Add New User
+                </button>
+              </div>
+
+              <div class="users-search-bar">
+                <input
+                  type="text"
+                  id="userSearchInput"
+                  placeholder="Search users by name or email..."
+                  onkeyup="filterUsers()"
+                />
+                <select id="userStatusFilter" onchange="filterUsers()">
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div class="users-table-container">
+                <table class="users-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Avatar</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Login Count</th>
+                      <th>Last Login</th>
+                      <th>Joined</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="usersTableBody">
+                    <tr>
+                      <td colspan="9" class="loading-text">Loading users...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="pagination" id="usersPagination">
+                <button onclick="previousPage()">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span id="pageInfo">Page 1</span>
+                <button onclick="nextPage()">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Content -->
+          <div id="settingsContent" style="display: none">
+            <div class="settings-glass">
+              <div class="setting-item">
+                <label
+                  ><input type="checkbox" id="autoRefresh" /> Auto-refresh
+                  (30s)</label
+                >
+              </div>
+              <div class="setting-item">
+                <label>Default Page</label>
+                <select id="defaultPage">
+                  <option value="dashboard">Dashboard</option>
+                  <option value="profile">Profile</option>
+                  <option value="analytics">Analytics</option>
+                  <option value="users">User Management</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <label>Notifications</label>
+                <label
+                  ><input type="checkbox" id="notificationsEnabled" /> Enable
+                  notifications</label
+                >
+              </div>
+              <div class="setting-item">
+                <button class="danger-btn" onclick="clearLocalData()">
+                  <i class="fas fa-trash"></i> Clear Local Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit User Modal - Glass Morphic Design -->
+    <div id="userModal" class="modal" style="display: none">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <h3>
+            <i class="fas fa-user-plus"></i>
+            <span id="modalTitle">Add New User</span>
+          </h3>
+          <button class="modal-close" onclick="closeUserModal()">
+            &times;
+          </button>
+        </div>
+        <form id="userForm">
+          <input type="hidden" id="editUserId" />
+
+          <div class="modal-form-group">
+            <label><i class="fas fa-user"></i> Full Name</label>
+            <input
+              type="text"
+              id="modalUserName"
+              required
+              placeholder="Enter full name"
+              class="modal-input"
+            />
+          </div>
+
+          <div class="modal-form-group">
+            <label><i class="fas fa-envelope"></i> Email Address</label>
+            <input
+              type="email"
+              id="modalUserEmail"
+              required
+              placeholder="Enter email address"
+              class="modal-input"
+            />
+          </div>
+
+          <div class="modal-form-group" id="passwordField">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <div class="password-wrapper">
+              <input
+                type="password"
+                id="userPassword"
+                placeholder="Enter password (min 6 chars)"
+                class="modal-input"
+              />
+              <i
+                class="fa-solid fa-eye-slash toggle-modal-password"
+                onclick="toggleModalPassword('userPassword', this)"
+              ></i>
+            </div>
+            <small class="input-hint"
+              >Minimum 6 characters, include letters and numbers</small
+            >
+          </div>
+
+          <div class="modal-form-group">
+            <label><i class="fas fa-toggle-on"></i> Account Status</label>
+            <select id="userStatus" class="modal-select">
+              <option value="active">
+                🟢 Active - User can login and access dashboard
+              </option>
+              <option value="inactive">🔴 Inactive - User cannot login</option>
+            </select>
+          </div>
+
+          <div class="modal-form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="userIsAdmin" />
+              <span class="checkbox-custom"></span>
+              <span><i class="fas fa-shield-alt"></i> Admin privileges</span>
+            </label>
+            <small class="input-hint"
+              >Admin users can manage all settings and users</small
+            >
+          </div>
+
+          <div class="modal-buttons">
+            <button
+              type="button"
+              class="modal-btn-secondary"
+              onclick="closeUserModal()"
+            >
+              <i class="fas fa-times"></i> Cancel
+            </button>
+            <button type="submit" class="modal-btn-primary">
+              <i class="fas fa-save"></i>
+              <span id="saveButtonText">Save User</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal" style="display: none">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirm Delete</h3>
+          <button class="modal-close" onclick="closeDeleteModal()">
+            &times;
+          </button>
+        </div>
+        <div class="delete-modal-body">
+          <div class="warning-icon">
+            <i class="fas fa-user-slash"></i>
+          </div>
+          <p>
+            Are you sure you want to delete user
+            <strong id="deleteUserName"></strong>?
+          </p>
+          <p class="warning-text">
+            ⚠️ This action cannot be undone! All user data will be permanently
+            removed.
+          </p>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-btn-secondary" onclick="closeDeleteModal()">
+            <i class="fas fa-ban"></i> Cancel
+          </button>
+          <button class="modal-btn-danger" onclick="confirmDeleteUser()">
+            <i class="fas fa-trash-alt"></i> Delete User
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

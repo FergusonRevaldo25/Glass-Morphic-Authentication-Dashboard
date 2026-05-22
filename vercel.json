@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "name": "glass-auth-dashboard-frontend",
+  "builds": [{ "src": "index.html", "use": "@vercel/static" }],
+  "routes": [{ "src": "/(.*)", "dest": "/index.html" }]
+}
