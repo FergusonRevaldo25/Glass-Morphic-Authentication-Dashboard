@@ -9,6 +9,7 @@ A modern, production-ready authentication dashboard with glass morphic design, b
 ## ✨ Features
 
 ### 🔐 Authentication
+
 - **Behavioral CAPTCHA** - No annoying puzzles! Verifies humans through natural interactions
 - **Two-Factor Authentication (2FA)** - Demo implementation with 6-digit codes
 - **JWT Sessions** - Secure token-based authentication
@@ -16,6 +17,7 @@ A modern, production-ready authentication dashboard with glass morphic design, b
 - **Session Persistence** - "Remember me" functionality
 
 ### 👥 User Management
+
 - **Full CRUD Operations** - Create, Read, Update, Delete users
 - **Search & Filter** - Find users by name, email, or status
 - **Pagination** - 10 users per page with navigation
@@ -23,6 +25,7 @@ A modern, production-ready authentication dashboard with glass morphic design, b
 - **Admin Roles** - Assign admin privileges
 
 ### 📊 Dashboard
+
 - **Real-time Stats** - Total users, active sessions, daily signups
 - **Activity Feed** - Track all user actions with timestamps
 - **Leaderboard** - Weekly top active users
@@ -30,17 +33,20 @@ A modern, production-ready authentication dashboard with glass morphic design, b
 - **Activity Chart** - Visual representation of 7-day activity
 
 ### 👤 Profile Management
+
 - **Profile Picture Upload** - Image upload with automatic optimization (Sharp)
 - **Bio & Location** - User profile customization
 - **Password Change** - Secure password updates
 - **Login Statistics** - Track login count and last activity
 
 ### 📈 Analytics & Export
+
 - **User Growth Chart** - Visual user acquisition tracking
 - **CSV Export** - Export user data for reporting
 - **Top Users List** - Most active users leaderboard
 
 ### 🎨 UI/UX
+
 - **Glass Morphic Design** - Modern frosted glass effect
 - **Dark/Light Mode** - Theme switching with localStorage persistence
 - **Responsive Layout** - Works perfectly on desktop, tablet, and mobile
@@ -49,6 +55,7 @@ A modern, production-ready authentication dashboard with glass morphic design, b
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **HTML5** - Semantic markup
 - **CSS3** - Glass morphic effects, animations, responsive design
 - **JavaScript (ES6+)** - Vanilla JS, no frameworks
@@ -56,6 +63,7 @@ A modern, production-ready authentication dashboard with glass morphic design, b
 - **Font Awesome 6** - Icons
 
 ### Backend
+
 - **Node.js** - JavaScript runtime
 - **Express.js** - Web framework
 - **PostgreSQL** - Primary database (also supports SQLite)
@@ -126,6 +134,7 @@ PORT=3000
 ### 5. Start the Application
 
 Terminal 1 - Backend Server
+
 ```bash
 npm start
 # or
@@ -133,6 +142,7 @@ node server.js
 ```
 
 Terminal 2 - Frontend Server
+
 ```bash
 npx serve .
 # or
@@ -160,22 +170,22 @@ glass-auth-dashboard/
 
 🔌 API Endpoints
 
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | /api/signup | User registration |
-| POST | /api/login | User login |
-| POST | /api/logout | User logout |
-| GET | /api/dashboard-data | Dashboard statistics |
-| GET | /api/profile | Get user profile |
-| PUT | /api/update-profile | Update user profile |
-| POST | /api/upload-avatar | Upload profile picture |
-| GET | /api/admin/users | Get all users |
-| POST | /api/admin/users | Add new user |
-| PUT | /api/admin/users/:id | Update user |
-| DELETE | /api/admin/users/:id | Delete user |
-| GET | /api/export-users | Export users as CSV |
-| GET | /api/activity-chart | Get chart data |
-| GET | /api/leaderboard | Get top users |
+| Method | Endpoint             | Description            |
+| ------ | -------------------- | ---------------------- |
+| POST   | /api/signup          | User registration      |
+| POST   | /api/login           | User login             |
+| POST   | /api/logout          | User logout            |
+| GET    | /api/dashboard-data  | Dashboard statistics   |
+| GET    | /api/profile         | Get user profile       |
+| PUT    | /api/update-profile  | Update user profile    |
+| POST   | /api/upload-avatar   | Upload profile picture |
+| GET    | /api/admin/users     | Get all users          |
+| POST   | /api/admin/users     | Add new user           |
+| PUT    | /api/admin/users/:id | Update user            |
+| DELETE | /api/admin/users/:id | Delete user            |
+| GET    | /api/export-users    | Export users as CSV    |
+| GET    | /api/activity-chart  | Get chart data         |
+| GET    | /api/leaderboard     | Get top users          |
 
 🎯 Features in Action
 
